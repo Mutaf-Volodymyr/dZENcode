@@ -1,0 +1,16 @@
+
+__pycache__
+.idea
+.env
+.venv
+db.sqlite3
+*.log
+*.pot
+*.pyc
+.DS_Store
+db.log
+static/
+media/
+root_domio.pem
+enter_instance.sh
+Makefile

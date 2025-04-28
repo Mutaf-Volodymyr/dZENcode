@@ -1,0 +1,2 @@
+from base.middlewares.automatic_jwt_token import JWTAuthenticationMiddleware
+

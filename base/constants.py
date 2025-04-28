@@ -1,0 +1,5 @@
+IMAGES_EXTENSIONS = ("png", "jpg ", "gif")
+MAX_IMAGE_SIZE = 320, 240
+
+DOC_EXTENSIONS = ("txt", )
+MAX_DOC_SIZE = 100 * 1024
