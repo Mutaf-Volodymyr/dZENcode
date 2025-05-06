@@ -67,6 +67,8 @@ services:
       dockerfile: Dockerfile
     container_name: celery_worker
     command: celery -A config worker --loglevel=info
+    volumes:
+      - ./media:/app/media
     env_file:
       - .env
     environment:
