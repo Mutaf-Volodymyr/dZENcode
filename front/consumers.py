@@ -1,7 +1,7 @@
 import json
 import aiohttp
 from channels.generic.websocket import AsyncWebsocketConsumer
-
+from config.settings import CURRENT_HOST
 
 
 class CommentConsumer(AsyncWebsocketConsumer):
@@ -23,7 +23,10 @@ class CommentConsumer(AsyncWebsocketConsumer):
 
     async def get_comments_from_api(self):
         async with aiohttp.ClientSession() as session:
-            async with session.get(f"http://web:8000/api/v1/comments/comments/?ordering=-rating") as response:
+            headers = {"Host": CURRENT_HOST}
+            async with session.get(
+                    f"http://web:8000/api/v1/comments/comments/?ordering=-rating",
+                    headers=headers) as response:
                 return await response.json()
 
     async def notify_clients(self):

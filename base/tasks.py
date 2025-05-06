@@ -4,6 +4,8 @@ from celery import shared_task
 from channels.layers import get_channel_layer
 import requests
 
+from base.utils.file_manager import check_image
+
 redis_cache = caches["default"]
 
 
@@ -38,3 +40,9 @@ def send_comment_updates():
                 "comments": comments
             }
         )
+
+
+@shared_task
+def resize_image_task(file_path, file_extension):
+    check_image(file_path=file_path, file_extension=file_extension)
+

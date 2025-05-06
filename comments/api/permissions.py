@@ -6,3 +6,8 @@ class OwnerOrReadOnly(permissions.BasePermission):
         if request.method in ["PUT", "PATCH", "DELETE"]:
             return obj.user == request.user
         return True
+
+    def has_permission(self, request, view):
+        if request.method == "POST":
+            return request.user.is_authenticated
+        return True
