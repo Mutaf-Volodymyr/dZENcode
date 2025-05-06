@@ -18,12 +18,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
-
 from base.autodoc import schema_view
+from front import views
 from comments.api.auth import LoginView, RegisterView, UpdatePasswordView
 from comments.api.auth.view import LogoutUserAPIView
 
 API_URL = "api/v1/"
+
+
+
 
 autodoc_urls = [
     path(
@@ -52,6 +55,8 @@ api_urls = [
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-
     path(API_URL, include(api_urls)),
+    path('', views.comments, name='comments'),
 ]
+
+

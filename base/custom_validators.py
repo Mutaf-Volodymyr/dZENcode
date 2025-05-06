@@ -54,3 +54,10 @@ class FileValidator:
         if file.size > self.max_doc_size:
             raise ValidationError(
                 f"The size of the text file should not exceed {self.max_doc_size / 1024} KB.")
+
+    def deconstruct(self):
+        return (
+            "base.custom_validators.FileValidator",  # Полный путь к классу
+            [],
+            {}
+        )

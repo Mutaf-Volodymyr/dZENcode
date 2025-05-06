@@ -1,0 +1,104 @@
+services:
+  db:
+    env_file:
+      - .env
+    container_name: ${MYSQL_CONTAINER_NAME}
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - backend
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u ${MYSQL_USER} --password=${MYSQL_ROOT_PASSWORD}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dZENcode
+    volumes:
+      - .:/app
+      - ./static:/app/static
+      - ./media:/app/media
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - backend
+    command: >
+      sh -c "echo '===> Запускаем миграции...' &&
+             python manage.py migrate &&
+             echo '===> Запускаем Uvicorn...' &&
+             uvicorn config.asgi:application --host 0.0.0.0 --port 8000"
+
+  redis:
+    image: redis:alpine
+    env_file:
+      - .env
+    container_name: ${REDIS_HOST}
+    restart: always
+    networks:
+      - backend
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery_worker
+    command: celery -A config worker --loglevel=info
+    env_file:
+      - .env
+    environment:
+      - SECRET_KEY=django-insecure-v#7+xsy6p%3o6@vq_t#lc2!6(ctwt#0&#^86+rya(hvntif*0-
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - backend
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_server
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./static:/static:ro
+      - ./media:/media:ro
+      - ./logs:/app/logs
+    depends_on:
+      - web
+    networks:
+      - backend
+
+volumes:
+  mysql_data:
+  static_volume:
+  media_volume:
+
+networks:
+  backend:
+    driver: bridge

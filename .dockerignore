@@ -1,0 +1,17 @@
+# Игнорируем папки и файлы, которые не нужны в контейнере
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.log
+*.sqlite
+.dockerignore
+.git
+.gitignore
+node_modules
+shell_to.py
+problem.txt
+.venv
+.idea
+nginx/

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гонка комментариев</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 20px;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        #comments-container {
+            width: 60%;
+            margin: auto;
+            border-radius: 12px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .comment {
+            border-left: 3px solid #007bff; /* Визуальное отделение */
+            margin-left: 25px;
+            padding: 15px;
+            position: relative;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .comment:hover {
+            background-color: #f8f9fc;
+        }
+
+        .new-comment {
+            animation: fadeIn 0.5s ease-in-out;
+            background-color: #e8f0ff !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .username {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            color: #007bff;
+            font-size: 18px;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: #888;
+            text-transform: lowercase;
+        }
+
+        .children {
+            margin-top: 10px;
+            padding-left: 20px;
+            border-left: 2px dashed #bbb;
+        }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align: center; color: #333; font-family: 'Roboto', sans-serif;">🔥 Гонка комментариев</h2>
+<div id="comments-container">Загрузка...</div>
+
+<script>
+    const socket = new WebSocket(`ws://localhost/ws/comments/`);
+    let currentComments = [];
+
+    socket.onopen = function () {
+        socket.send(JSON.stringify({"action": "fetch_comments"}));
+    };
+
+    socket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        const newComments = data.comments.results;
+
+        if (JSON.stringify(newComments) !== JSON.stringify(currentComments)) {
+            updateComments(newComments);
+            currentComments = newComments;
+        }
+    };
+
+    function updateComments(comments) {
+        const container = document.getElementById("comments-container");
+        container.style.transform = "scale(0.95)";
+
+        setTimeout(() => {
+            renderComments(comments);
+            container.style.transform = "scale(1)";
+        }, 300);
+    }
+
+    function renderComments(comments, parentElement = null) {
+        const container = parentElement || document.getElementById("comments-container");
+        container.innerHTML = "";
+
+        comments.forEach(comment => {
+            const commentElement = document.createElement("div");
+            commentElement.classList.add("comment");
+
+            if (!currentComments.includes(comment)) {
+                commentElement.classList.add("new-comment");
+            }
+
+            commentElement.innerHTML = `
+                <div class="user-info">
+                    <span class="username">${comment.user.username} &lt;${comment.user.email}&gt;</span>
+                </div>
+                <p class="timestamp">создано: ${comment.created_at.split('T')[0]} | обновлено: ${comment.updated_at.split('T')[0]}</p>
+                <p><strong>Рейтинг:</strong> ${comment.rating}</p>
+                <p><strong>Текст:</strong> ${comment.text}</p>
+                ${comment.file ? `<p><strong>Файл:</strong> ${comment.file}</p>` : ""}
+                <div class="children"></div>
+            `;
+
+            container.appendChild(commentElement);
+
+            if (comment.children.length > 0) {
+                const childrenContainer = commentElement.querySelector(".children");
+                renderComments(comment.children, childrenContainer);
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

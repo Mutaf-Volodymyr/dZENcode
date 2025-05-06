@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-
+from base.tasks import send_comment_updates
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 from base.custom_validators import FileValidator
 from base.model import BaseModel
 
@@ -34,4 +36,14 @@ class Comment(BaseModel):
         return f"Comment(id={self.id}, user={self.user.id}, parent={self.parent.id})"
 
     class Meta:
-        ordering = ('-created_at',)
+        ordering = ['-created_at']
+
+
+@receiver(post_save, sender=Comment)
+def on_save(sender, instance, **kwargs):
+    send_comment_updates.delay()
+
+@receiver(post_delete, sender=Comment)
+def on_delete(sender, instance, **kwargs):
+    send_comment_updates.delay()
+
