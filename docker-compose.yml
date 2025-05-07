@@ -42,6 +42,8 @@ services:
     command: >
       sh -c "echo '===> Запускаем миграции...' &&
              python manage.py migrate &&
+             echo '===> Проброс статических файлов'
+             python manage.py collectstatic --noinput &&
              echo '===> Запускаем Uvicorn...' &&
              uvicorn config.asgi:application --host 0.0.0.0 --port 8000"
 
