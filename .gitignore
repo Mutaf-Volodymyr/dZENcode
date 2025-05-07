@@ -14,3 +14,4 @@ media/
 root_domio.pem
 enter_instance.sh
 Makefile
+/logs
