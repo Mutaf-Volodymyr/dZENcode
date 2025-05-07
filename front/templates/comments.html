@@ -135,8 +135,8 @@
   </div>
 
   <script>
-
-    const socket = new WebSocket(`ws://16.170.171.212/ws/comments/`);
+    const current_host = "{{ current_host|escapejs }}";
+    const socket = new WebSocket(`ws://${current_host}/ws/comments/`);
     let currentComments = [];
 
     socket.onopen = function () {
