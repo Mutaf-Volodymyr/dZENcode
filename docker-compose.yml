@@ -15,11 +15,9 @@ services:
       - backend
     ports:
       - "3306:3306"
-    healthcheck:
-      test: [ "CMD-SHELL", "mysqladmin ping -h db -u ${MYSQL_USER} --password=${MYSQL_ROOT_PASSWORD}" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+    depends_on:
+      - redis
+
 
   web:
     build:
@@ -33,14 +31,12 @@ services:
     env_file:
       - .env
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - db
     networks:
       - backend
     command: >
-      sh -c "echo '===> Запускаем миграции...' &&
+      sh -c "sleep 3 &&
+             echo '===> Запускаем миграции...' &&
              python manage.py migrate &&
              echo '===> Проброс статических файлов'
              python manage.py collectstatic --noinput &&
@@ -76,10 +72,9 @@ services:
     environment:
       - SECRET_KEY=django-insecure-v#7+xsy6p%3o6@vq_t#lc2!6(ctwt#0&#^86+rya(hvntif*0-
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - db
+      - redis
+
     networks:
       - backend
 
