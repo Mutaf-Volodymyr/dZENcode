@@ -8,9 +8,11 @@ autobahn==24.4.2
 Automat==25.4.16
 billiard==4.2.1
 celery==5.5.2
+certifi==2025.4.26
 cffi==1.17.1
 channels==4.2.2
 channels_redis==4.2.1
+charset-normalizer==3.4.2
 click==8.1.8
 click-didyoumean==0.3.1
 click-plugins==1.1.1
@@ -20,6 +22,7 @@ cryptography==44.0.2
 Django==5.2
 django-environ==0.12.0
 django-filter==25.1
+django-redis==5.4.0
 djangorestframework==3.16.0
 djangorestframework_simplejwt==5.5.0
 drf-yasg==1.21.10
@@ -30,9 +33,9 @@ idna==3.10
 incremental==24.7.2
 inflection==0.5.1
 kombu==5.5.3
+lxml==5.4.0
 msgpack==1.1.0
 multidict==6.4.3
-mysqlclient==2.2.7
 packaging==25.0
 pillow==11.2.1
 prompt_toolkit==3.0.51
@@ -46,6 +49,7 @@ python-dateutil==2.9.0.post0
 pytz==2025.2
 PyYAML==6.0.2
 redis==5.2.1
+requests==2.32.3
 service-identity==24.2.0
 setuptools==80.0.0
 six==1.17.0
@@ -55,6 +59,7 @@ txaio==23.1.1
 typing_extensions==4.13.2
 tzdata==2025.2
 uritemplate==4.1.1
+urllib3==2.4.0
 uvicorn==0.34.2
 vine==5.1.0
 wcwidth==0.2.13
@@ -64,6 +69,3 @@ whitenoise==6.9.0
 wsproto==1.2.0
 yarl==1.20.0
 zope.interface==7.2
-django-redis>=5.3.0
-requests~=2.32.3
-lxml~=5.4.0

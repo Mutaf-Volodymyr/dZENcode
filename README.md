@@ -19,7 +19,7 @@
 - DRF
 - Celery
 - Redis
-- MySQL
+- MySQL (заменено на SQLite для деплоя)
 - JWT
 - WebSocket
 - Docker

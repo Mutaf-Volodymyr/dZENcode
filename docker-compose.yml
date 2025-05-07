@@ -1,24 +1,4 @@
 services:
-  db:
-    env_file:
-      - .env
-    container_name: ${MYSQL_CONTAINER_NAME}
-    image: mysql:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - backend
-    ports:
-      - "3306:3306"
-    depends_on:
-      - redis
-
-
   web:
     build:
       context: .
@@ -30,8 +10,6 @@ services:
       - ./media:/app/media
     env_file:
       - .env
-    depends_on:
-      - db
     networks:
       - backend
     command: >
@@ -72,7 +50,6 @@ services:
     environment:
       - SECRET_KEY=django-insecure-v#7+xsy6p%3o6@vq_t#lc2!6(ctwt#0&#^86+rya(hvntif*0-
     depends_on:
-      - db
       - redis
 
     networks:
